@@ -1,19 +1,12 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-
-
-class HomeScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Welcome'
-  };
-  render() {
-    return <Text>Hello, Navigation!</Text>;
-  }
-}
+import MenuScreen from './components/MenuScreen';
+import GameScreen from './components/GameScreen';
 
 const SimpleApp = StackNavigator({
-  Home: { screen: HomeScreen }
+  Menu: { screen: MenuScreen },
+  Game: { screen: GameScreen }
 });
 
 export default class App extends React.Component {
