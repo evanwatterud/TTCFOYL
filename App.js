@@ -1,26 +1,32 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Easing, Animated, StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import MenuScreen from './components/MenuScreen';
 import GameScreen from './components/GameScreen';
+import HighScoreScreen from './components/HighScoreScreen';
 
-const SimpleApp = StackNavigator({
-  Menu: { screen: MenuScreen },
-  Game: { screen: GameScreen }
-});
+const Nav = StackNavigator(
+  {
+    // Screens of the app
+    Menu: { screen: MenuScreen },
+    Game: { screen: GameScreen },
+    HighScore: { screen: HighScoreScreen }
+  },
+  {
+    initialRouteName: 'Menu', // Have the app start on the menu screen
+    // Remove transition animation
+    transitionConfig: () => ({
+      transitionSpec: {
+        duration: 0,
+        timing: Animated.timing,
+        easing: Easing.step0
+      }
+    })
+  }
+);
 
 export default class App extends React.Component {
   render() {
-      return <SimpleApp />;
+      return <Nav />;
   }
 }
-
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
