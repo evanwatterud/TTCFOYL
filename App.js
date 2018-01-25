@@ -1,17 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+
+
+class HomeScreen extends React.Component {
+  static navigationOptions = {
+    title: 'Welcome'
+  };
+  render() {
+    return <Text>Hello, Navigation!</Text>;
+  }
+}
+
+const SimpleApp = StackNavigator({
+  Home: { screen: HomeScreen }
+});
 
 export default class App extends React.Component {
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
-        <Text>Changes you make will automatically reload.</Text>
-        <Text>Shake your phone to open the developer menu.</Text>
-      </View>
-    );
+      return <SimpleApp />;
   }
 }
+
 
 const styles = StyleSheet.create({
   container: {
