@@ -1,9 +1,9 @@
 import React from 'react';
 import { Easing, Animated, StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import MenuScreen from './components/MenuScreen';
-import GameScreen from './components/GameScreen';
-import HighScoreScreen from './components/HighScoreScreen';
+import MenuScreen from './containers/MenuScreen';
+import GameScreen from './containers/GameScreen';
+import HighScoreScreen from './containers/HighScoreScreen';
 
 const Nav = StackNavigator(
   {
