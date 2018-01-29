@@ -1,9 +1,13 @@
 import React from 'react';
 import { Easing, Animated, StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import { Provider } from 'react-redux';
+
 import MenuScreen from './containers/MenuScreen';
 import GameScreen from './containers/GameScreen';
 import HighScoreScreen from './containers/HighScoreScreen';
+
+import store from './store';
 
 const Nav = StackNavigator(
   {
@@ -27,6 +31,10 @@ const Nav = StackNavigator(
 
 export default class App extends React.Component {
   render() {
-      return <Nav />;
+      return (
+        <Provider store={store}>
+          <Nav />
+        </Provider>
+      );
   }
 }
