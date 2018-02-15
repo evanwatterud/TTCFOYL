@@ -7,7 +7,8 @@ import MenuScreen from './containers/MenuScreen';
 import GameScreen from './containers/GameScreen';
 import HighScoreScreen from './containers/HighScoreScreen';
 
-import store from './store';
+import store from './store/index';
+import incrementScore from './actions/scoreActions';
 
 const Nav = StackNavigator(
   {
@@ -31,6 +32,7 @@ const Nav = StackNavigator(
 
 export default class App extends React.Component {
   render() {
+    console.log(store.getState());
       return (
         <Provider store={store}>
           <Nav />

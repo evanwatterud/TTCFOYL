@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-export default class MenuScreen extends React.Component {
+export default class HighScoreScreen extends React.Component {
   static navigationOptions = {
     title: 'HighScores'
   };
