@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import InfoBar from '../components/InfoBar.js';
+import ShrinkingCircle from '../components/ShrinkingCircle.js'
 
 class GameScreen extends React.Component {
   constructor(props) {
@@ -17,8 +18,11 @@ class GameScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.barContainer}>
-        <InfoBar score={this.props.score} />
+      <View>
+        <View style={styles.barContainer}>
+          <InfoBar score={this.props.score} />
+        </View>
+        <ShrinkingCircle />
       </View>
     )
   }
