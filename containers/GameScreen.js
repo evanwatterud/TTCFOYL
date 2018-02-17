@@ -1,8 +1,9 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
+import { Text, View, Button, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { incrementScore, resetScore} from '../actions/scoreActions';
+import { incrementScore, resetScore } from '../actions/scoreActions';
+import InfoBar from '../components/InfoBar.js';
 
 class GameScreen extends React.Component {
   constructor(props) {
@@ -16,19 +17,18 @@ class GameScreen extends React.Component {
 
   render() {
     return (
-      <View>
-      <Text>{this.props.score}</Text>
-      <Button
-        onPress={() => {
-          this.props.incrementScore();
-          console.log(this.props)
-        }}
-        title="Increment"
-      />
+      <View style={styles.barContainer}>
+        <InfoBar score={this.props.score} />
       </View>
     )
   }
 }
+
+const styles = StyleSheet.create({
+  barContainer: {
+    paddingTop: (Platform.OS === 'ios') ? 20 : 0,
+  }
+});
 
 const mapStateToProps = (state) => ({
   score: state.score
