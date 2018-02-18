@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { CIRCLE_SIZE } from '../utils/config.js';
 
 export default class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { size: 120, active: true }
+    this.state = { size: CIRCLE_SIZE, active: true }
 
     var interval = setInterval(() => {
       if (this.state.size == 2) {
@@ -22,17 +23,19 @@ export default class ShrinkingCircle extends React.Component {
         <View style={{
           justifyContent: 'center',
           alignItems: 'center',
-          height: 100,
-          width: 100,
-          position: 'absolute'
-        }}>
-        <View style={{
-          backgroundColor: 'midnightblue',
+          height: CIRCLE_SIZE,
+          width: CIRCLE_SIZE,
+          top: this.props.location.y,
+          left: this.props.location.x,
           position: 'absolute',
-          height: this.state.size,
-          width: this.state.size,
-          borderRadius: this.state.size/2
-        }} />
+        }}>
+          <View style={{
+            backgroundColor: 'midnightblue',
+            position: 'absolute',
+            height: this.state.size,
+            width: this.state.size,
+            borderRadius: this.state.size/2
+          }} />
         </View>
       )
     } else {
