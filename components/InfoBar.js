@@ -9,19 +9,20 @@ export default class InfoBar extends React.Component {
   render() {
     return (
       <View style={styles.barContainer}>
-        <Text style={styles.scoreText} >Score: {this.props.score}</Text>
+        <Text style={styles.infoText} >Score: {this.props.score}</Text>
+        <Text style={styles.infoText} >Lives: {this.props.lives}</Text>
       </View>
     )
   }
 }
 
 const styles = StyleSheet.create({
-  scoreText: {
+  infoText: {
     fontWeight: 'bold',
   },
 
   barContainer: {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'space-around'
   }
 });

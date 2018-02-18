@@ -32,11 +32,10 @@ const Nav = StackNavigator(
 
 export default class App extends React.Component {
   render() {
-    console.log(store.getState());
-      return (
-        <Provider store={store}>
-          <Nav />
-        </Provider>
-      );
+    return (
+      <Provider store={store}>
+        <Nav />
+      </Provider>
+    );
   }
 }

@@ -1,2 +1,4 @@
 export const INCREMENT_SCORE = 'INCREMENT_SCORE';
 export const RESET_SCORE = 'RESET_SCORE';
+export const DECREMENT_LIVES = 'DECREMENT_LIVES';
+export const RESET_LIVES = 'RESET_LIVES';

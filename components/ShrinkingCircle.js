@@ -4,6 +4,7 @@ import { CIRCLE_SIZE } from '../utils/config.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
+import { decrementLives, resetLives } from '../actions/livesActions';
 
 class ShrinkingCircle extends React.Component {
   constructor(props) {
@@ -12,6 +13,7 @@ class ShrinkingCircle extends React.Component {
 
     var interval = setInterval(() => {
       if (this.state.size == 2) {
+        props.decrementLives();
         clearInterval(interval);
         this.setState({ size: this.state.size, active: false })
       } else {
@@ -51,14 +53,17 @@ class ShrinkingCircle extends React.Component {
 
 // Map redux state to the ShrinkingCircle props
 const mapStateToProps = (state) => ({
-  score: state.score
+  score: state.score,
+  lives: state.lives
 });
 
 // Map redux dispatch functions to the ShrinkingCircle props
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     incrementScore: incrementScore,
-    resetScore: resetScore
+    resetScore: resetScore,
+    decrementLives: decrementLives,
+    resetLives: resetLives
   }, dispatch);
 };
 

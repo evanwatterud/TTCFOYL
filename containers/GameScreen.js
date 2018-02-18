@@ -29,7 +29,7 @@ class GameScreen extends React.Component {
     return (
       <View>
         <View style={styles.barContainer}>
-          <InfoBar score={this.props.score} />
+          <InfoBar score={this.props.score} lives={this.props.lives} />
         </View>
         <ShrinkingCircle location={getRandomLocation()}/>
       </View>
@@ -54,20 +54,21 @@ function getRandomLocation() {
 
 const styles = StyleSheet.create({
   barContainer: {
-    paddingTop: 20,
+    paddingTop: 20, // Padding to account for OS status bar
   }
 });
 
 // Map redux state to the GameScreen props
 const mapStateToProps = (state) => ({
-  score: state.score
+  score: state.score,
+  lives: state.lives
 });
 
 // Map redux dispatch functions to the GameScreen props
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     incrementScore: incrementScore,
-    resetScore: resetScore
+    resetScore: resetScore,
   }, dispatch);
 };
 
