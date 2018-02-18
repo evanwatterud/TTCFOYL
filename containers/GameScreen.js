@@ -1,5 +1,13 @@
 import React from 'react';
-import { Text, View, Button, StyleSheet, Platform, Dimensions } from 'react-native';
+import {
+  Text,
+  View,
+  Button,
+  StyleSheet,
+  Platform,
+  Dimensions,
+  TouchableWithoutFeedback
+} from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
@@ -29,12 +37,14 @@ class GameScreen extends React.Component {
   }
 }
 
+// Helper function for getRandomLocation below
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
 }
 
+// Gets a random x,y location on the screen, takes into account the circle size and screen dimensions
 function getRandomLocation() {
   location = { x: 0, y: 0 };
   location.x = getRandomInt(0, Dimensions.get('window').width - CIRCLE_SIZE);
@@ -44,14 +54,16 @@ function getRandomLocation() {
 
 const styles = StyleSheet.create({
   barContainer: {
-    paddingTop: (Platform.OS === 'ios') ? 20 : 0,
+    paddingTop: 20,
   }
 });
 
+// Map redux state to the GameScreen props
 const mapStateToProps = (state) => ({
   score: state.score
 });
 
+// Map redux dispatch functions to the GameScreen props
 const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     incrementScore: incrementScore,
@@ -59,4 +71,5 @@ const mapDispatchToProps = (dispatch) => {
   }, dispatch);
 };
 
+// Connects the above mappings to the component
 export default connect(mapStateToProps, mapDispatchToProps)(GameScreen);

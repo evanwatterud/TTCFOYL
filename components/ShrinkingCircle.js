@@ -1,8 +1,11 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { CIRCLE_SIZE } from '../utils/config.js';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { incrementScore, resetScore } from '../actions/scoreActions';
 
-export default class ShrinkingCircle extends React.Component {
+class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
     this.state = { size: CIRCLE_SIZE, active: true }
@@ -29,6 +32,7 @@ export default class ShrinkingCircle extends React.Component {
           left: this.props.location.x,
           position: 'absolute',
         }}>
+          <TouchableWithoutFeedback onPress={() => {this.props.incrementScore()}} >
           <View style={{
             backgroundColor: 'midnightblue',
             position: 'absolute',
@@ -36,6 +40,7 @@ export default class ShrinkingCircle extends React.Component {
             width: this.state.size,
             borderRadius: this.state.size/2
           }} />
+          </TouchableWithoutFeedback>
         </View>
       )
     } else {
@@ -43,3 +48,19 @@ export default class ShrinkingCircle extends React.Component {
     }
   }
 }
+
+// Map redux state to the ShrinkingCircle props
+const mapStateToProps = (state) => ({
+  score: state.score
+});
+
+// Map redux dispatch functions to the ShrinkingCircle props
+const mapDispatchToProps = (dispatch) => {
+  return bindActionCreators({
+    incrementScore: incrementScore,
+    resetScore: resetScore
+  }, dispatch);
+};
+
+// Connects the above mappings to the component
+export default connect(mapStateToProps, mapDispatchToProps)(ShrinkingCircle);
