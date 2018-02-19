@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
 // Map redux state to the GameScreen props
 const mapStateToProps = (state) => ({
   score: state.score,
-  lives: state.lives
+  lives: state.lives,
+  circles: state.circles
 });
 
 // Map redux dispatch functions to the GameScreen props
