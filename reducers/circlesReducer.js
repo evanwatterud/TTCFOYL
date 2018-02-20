@@ -11,9 +11,10 @@ export default (state = initialState, action) => {
     case RESET_CIRCLES:
       return initialState
     case ADD_CIRCLE:
-      return [...state, action.payload]
+      console.log(action);
+      return [...state, { location: action.payload.location, id: action.payload.id }]
     case REMOVE_CIRCLE:
-      return state.filter((location) => (location.x != payload.x && location.y != payload.y));
+      return state.filter((circle) => (circle.location.x != action.payload.x && circle.location.y != action.payload.y));
     default:
       return state
   }

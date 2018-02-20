@@ -11,6 +11,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
+import { addCircle } from '../actions/circlesActions';
 import InfoBar from '../components/InfoBar.js';
 import ShrinkingCircle from '../components/ShrinkingCircle.js';
 import { CIRCLE_SIZE } from '../utils/config.js';
@@ -18,6 +19,12 @@ import { CIRCLE_SIZE } from '../utils/config.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { uid: 0 };
+
+    var interval = setInterval(() => {
+      props.addCircle({ location: getRandomLocation(), id: this.state.uid });
+      this.setState({ uid: this.state.uid + 1 });
+    }, 2000);
   }
 
   static navigationOptions = {
@@ -26,12 +33,13 @@ class GameScreen extends React.Component {
   };
 
   render() {
+    var circles = this.props.circles.map((circle) => <ShrinkingCircle key={circle.id} location={circle.location}/> );
     return (
       <View>
         <View style={styles.barContainer}>
           <InfoBar score={this.props.score} lives={this.props.lives} />
         </View>
-        <ShrinkingCircle location={getRandomLocation()}/>
+        {circles}
       </View>
     )
   }
@@ -70,6 +78,7 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     incrementScore: incrementScore,
     resetScore: resetScore,
+    addCircle: addCircle
   }, dispatch);
 };
 

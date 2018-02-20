@@ -4,14 +4,14 @@ import {
   REMOVE_CIRCLE
 } from './types';
 
-export const addCircle = (circleLocation) => ({
+export const addCircle = (payload) => ({
   type: ADD_CIRCLE,
-  payload: circleLocation
+  payload
 })
 
-export const removeCircle = (circleLocation) => ({
+export const removeCircle = (payload) => ({
   type: REMOVE_CIRCLE,
-  payload: circleLocation
+  payload
 })
 
 export const reserCircles = () => ({

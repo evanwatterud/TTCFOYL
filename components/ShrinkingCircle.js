@@ -5,56 +5,65 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import { decrementLives, resetLives } from '../actions/livesActions';
+import { removeCircle } from '../actions/circlesActions';
 
 class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { size: CIRCLE_SIZE, active: true }
+    this.state = { size: CIRCLE_SIZE }
 
     var interval = setInterval(() => {
       if (this.state.size == 2) {
         props.decrementLives();
+        props.removeCircle(props.location);
         clearInterval(interval);
-        this.setState({ size: this.state.size, active: false })
-      } else {
-        this.setState({ size: this.state.size - 0.5, active: true });
+      } else if (this._mounted == true){
+        this.setState({ size: this.state.size - 0.5 });
       }
     }, 10);
   }
 
+  componentDidMount() {
+    this._mounted = true;
+  }
+
+  componentWillUnmount() {
+    this._mounted = false;
+  }
+
   render() {
-    if (this.state.active == true) {
-      return (
+    return (
+      <View style={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: CIRCLE_SIZE,
+        width: CIRCLE_SIZE,
+        top: this.props.location.y,
+        left: this.props.location.x,
+        position: 'absolute',
+      }}>
+        <TouchableWithoutFeedback onPress={() => {
+          this.props.incrementScore();
+          this.props.removeCircle(this.props.location);
+        }} >
         <View style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: CIRCLE_SIZE,
-          width: CIRCLE_SIZE,
-          top: this.props.location.y,
-          left: this.props.location.x,
+          backgroundColor: 'midnightblue',
           position: 'absolute',
-        }}>
-          <TouchableWithoutFeedback onPress={() => {this.props.incrementScore()}} >
-          <View style={{
-            backgroundColor: 'midnightblue',
-            position: 'absolute',
-            height: this.state.size,
-            width: this.state.size,
-            borderRadius: this.state.size/2
-          }} />
-          </TouchableWithoutFeedback>
-        </View>
-      )
-    } else {
-      return null
-    }
+          height: this.state.size,
+          width: this.state.size,
+          borderRadius: this.state.size/2
+        }} />
+        </TouchableWithoutFeedback>
+      </View>
+    )
   }
 }
 
 // Map redux state to the ShrinkingCircle props
 const mapStateToProps = (state) => ({
   score: state.score,
-  lives: state.lives
+  lives: state.lives,
+  circles: state.circles
 });
 
 // Map redux dispatch functions to the ShrinkingCircle props
@@ -63,7 +72,8 @@ const mapDispatchToProps = (dispatch) => {
     incrementScore: incrementScore,
     resetScore: resetScore,
     decrementLives: decrementLives,
-    resetLives: resetLives
+    resetLives: resetLives,
+    removeCircle: removeCircle
   }, dispatch);
 };
 
