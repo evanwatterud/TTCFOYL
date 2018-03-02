@@ -15,7 +15,7 @@ const Nav = StackNavigator(
     // Screens of the app
     Menu: { screen: MenuScreen },
     Game: { screen: GameScreen },
-    HighScore: { screen: HighScoreScreen }
+    HighScore: { screen: HighScoreScreen },
   },
   {
     initialRouteName: 'Menu', // Have the app start on the menu screen

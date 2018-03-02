@@ -17,10 +17,13 @@ import { addCircle } from '../actions/circlesActions';
 import InfoBar from '../components/InfoBar.js';
 import ShrinkingCircle from '../components/ShrinkingCircle.js';
 import { CIRCLE_SIZE } from '../utils/config.js';
+import { NavigationActions } from 'react-navigation'
+import { MenuScreen } from '../containers/MenuScreen.js';
 
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
+    console.log(props);
     this.state = { uid: 0 };
   }
 
@@ -53,6 +56,7 @@ class GameScreen extends React.Component {
   }
 
   render() {
+    const { navigate } = this.props.navigation;
     var circles = this.props.circles.map((circle) => <ShrinkingCircle key={circle.id} location={circle.location}/> );
     if (this.props.playing) {
       return (
@@ -65,7 +69,19 @@ class GameScreen extends React.Component {
       )
     } else {
       return (
-        <Text>You Lose</Text>
+        <View>
+          <Button
+            onPress={ () =>
+              // This navigates to the menu screen while reseting the screen stack
+              { this.props.navigation.dispatch(NavigationActions.reset({
+                index: 0,
+                key: null,
+                actions: [NavigationActions.navigate({ routeName: 'Menu' })]
+              })); }
+            }
+            title="Main Menu"
+          />
+        </View>
       )
     }
   }
