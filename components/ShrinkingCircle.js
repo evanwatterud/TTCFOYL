@@ -4,30 +4,35 @@ import { CIRCLE_SIZE } from '../utils/config.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
-import { decrementLives, resetLives } from '../actions/livesActions';
+import { stopPlaying } from '../actions/playingActions';
+import { decrementLives } from '../actions/livesActions';
 import { removeCircle } from '../actions/circlesActions';
 
 class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
     this.state = { size: CIRCLE_SIZE }
+  }
 
+  componentDidMount() {
+    this._mounted = true;
+    // The circle shrinks every tick of this time interval
     var interval = setInterval(() => {
-      if (this.state.size == 2) {
-        props.decrementLives();
-        props.removeCircle(props.location);
+      if (this.state.size == 2) { // Check if the circle is small enough to be deleted
+        this.props.decrementLives();
+        this.props.removeCircle(this.props.location);
         clearInterval(interval);
-      } else if (this._mounted == true){
+      } else if (this._mounted == true){ // If the circle is sufficient size, shrink by 0.5
         this.setState({ size: this.state.size - 0.5 });
       }
     }, 10);
   }
 
-  componentDidMount() {
-    this._mounted = true;
-  }
-
   componentWillUnmount() {
+    // If the circle is being deleted and lives are at 0, the player lost, so stop playing
+    if (this.props.lives == 0) {
+      this.props.stopPlaying();
+    }
     this._mounted = false;
   }
 
@@ -72,8 +77,8 @@ const mapDispatchToProps = (dispatch) => {
     incrementScore: incrementScore,
     resetScore: resetScore,
     decrementLives: decrementLives,
-    resetLives: resetLives,
-    removeCircle: removeCircle
+    removeCircle: removeCircle,
+    stopPlaying: stopPlaying
   }, dispatch);
 };
 

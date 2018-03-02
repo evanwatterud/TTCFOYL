@@ -11,6 +11,8 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
+import { startPlaying, stopPlaying } from '../actions/playingActions';
+import { resetLives } from '../actions/livesActions';
 import { addCircle } from '../actions/circlesActions';
 import InfoBar from '../components/InfoBar.js';
 import ShrinkingCircle from '../components/ShrinkingCircle.js';
@@ -20,11 +22,6 @@ class GameScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { uid: 0 };
-
-    var interval = setInterval(() => {
-      props.addCircle({ location: getRandomLocation(), id: this.state.uid });
-      this.setState({ uid: this.state.uid + 1 });
-    }, 2000);
   }
 
   static navigationOptions = {
@@ -32,16 +29,45 @@ class GameScreen extends React.Component {
     header: null
   };
 
+  componentWillMount() {
+    this.props.startPlaying();
+  }
+
+  componentDidMount() {
+    this.intervalID = setInterval(() => {
+      this.props.addCircle({ location: getRandomLocation(), id: this.state.uid });
+      this.setState({ uid: this.state.uid + 1 });
+    }, 2000);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!nextProps.playing) {
+      this.endGame();
+    }
+  }
+
+  endGame() {
+    clearInterval(this.intervalID);
+    this.props.resetScore();
+    this.props.resetLives();
+  }
+
   render() {
     var circles = this.props.circles.map((circle) => <ShrinkingCircle key={circle.id} location={circle.location}/> );
-    return (
-      <View>
-        <View style={styles.barContainer}>
-          <InfoBar score={this.props.score} lives={this.props.lives} />
+    if (this.props.playing) {
+      return (
+        <View>
+          <View style={styles.barContainer}>
+            <InfoBar score={this.props.score} lives={this.props.lives} />
+          </View>
+          {circles}
         </View>
-        {circles}
-      </View>
-    )
+      )
+    } else {
+      return (
+        <Text>You Lose</Text>
+      )
+    }
   }
 }
 
@@ -70,7 +96,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => ({
   score: state.score,
   lives: state.lives,
-  circles: state.circles
+  circles: state.circles,
+  playing: state.playing
 });
 
 // Map redux dispatch functions to the GameScreen props
@@ -78,7 +105,10 @@ const mapDispatchToProps = (dispatch) => {
   return bindActionCreators({
     incrementScore: incrementScore,
     resetScore: resetScore,
-    addCircle: addCircle
+    addCircle: addCircle,
+    startPlaying: startPlaying,
+    stopPlaying: stopPlaying,
+    resetLives: resetLives
   }, dispatch);
 };
 
