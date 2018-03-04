@@ -37,13 +37,19 @@ class GameScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.intervalID = setInterval(() => {
+    var callback = () => {
       this.props.addCircle({ location: getRandomLocation(), id: this.state.uid }); // Add a circle to the list of circles
       this.setState({ uid: this.state.uid + 1 });
-    }, 2000);
+      if (this.props.playing) {
+        setTimeout(callback, 1000);
+      }
+    }
+
+    setTimeout(callback, 1000);
   }
 
   componentWillReceiveProps(nextProps) {
+    // Check if the player has stopped playing, if so, handle ending the game
     if (!nextProps.playing) {
       this.endGame();
     }
