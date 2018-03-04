@@ -18,7 +18,7 @@ class ShrinkingCircle extends React.Component {
     this._mounted = true;
     // The circle shrinks every tick of this time interval
     var interval = setInterval(() => {
-      if (this.state.size == 2) { // Check if the circle is small enough to be deleted
+      if (this.state.size <= 2) { // Check if the circle is small enough to be deleted
         this.props.decrementLives();
         this.props.removeCircle(this.props.location);
         clearInterval(interval);

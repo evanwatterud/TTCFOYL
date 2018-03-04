@@ -14,6 +14,6 @@ export const removeCircle = (payload) => ({
   payload
 })
 
-export const reserCircles = () => ({
+export const resetCircles = () => ({
   type: RESET_CIRCLES
 })

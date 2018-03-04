@@ -14,7 +14,7 @@ import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import { startPlaying, stopPlaying } from '../actions/playingActions';
 import { resetLives } from '../actions/livesActions';
-import { addCircle } from '../actions/circlesActions';
+import { addCircle, resetCircles } from '../actions/circlesActions';
 import InfoBar from '../components/InfoBar.js';
 import ShrinkingCircle from '../components/ShrinkingCircle.js';
 import { CIRCLE_SIZE } from '../utils/config.js';
@@ -24,7 +24,7 @@ import { MenuScreen } from '../containers/MenuScreen.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { uid: 0 };
+    this.state = { uid: 0, difficulty: 500 };
   }
 
   static navigationOptions = {
@@ -39,13 +39,18 @@ class GameScreen extends React.Component {
   componentDidMount() {
     var callback = () => {
       this.props.addCircle({ location: getRandomLocation(), id: this.state.uid }); // Add a circle to the list of circles
-      this.setState({ uid: this.state.uid + 1 });
+      this.setState({ uid: this.state.uid + 1, difficulty: this.state.difficulty });
+      // Increase the rate at which circles are created unless difficulty is getting too insane
+      if (this.state.difficulty >= 10) {
+        this.setState({ uid: this.state.uid, difficulty: this.state.difficulty - 0.5 });
+      }
+      // While the player is still playing keep creating circles
       if (this.props.playing) {
-        setTimeout(callback, 1000);
+        setTimeout(callback, this.state.difficulty);
       }
     }
 
-    setTimeout(callback, 1000);
+    setTimeout(callback, this.state.difficulty);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,6 +58,12 @@ class GameScreen extends React.Component {
     if (!nextProps.playing) {
       this.endGame();
     }
+  }
+
+  // Must clear the circles array when screen unmounts so incorrect circles arent
+  // re-rendered when the game is played again
+  componentWillUnmount() {
+    this.props.resetCircles()
   }
 
   async endGame() {
@@ -149,6 +160,7 @@ const mapDispatchToProps = (dispatch) => {
     incrementScore: incrementScore,
     resetScore: resetScore,
     addCircle: addCircle,
+    resetCircles: resetCircles,
     startPlaying: startPlaying,
     stopPlaying: stopPlaying,
     resetLives: resetLives
