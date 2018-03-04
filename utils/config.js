@@ -1,1 +1,2 @@
-export const CIRCLE_SIZE = 120;
+export const MIN_CIRCLE_SIZE = 100;
+export const MAX_CIRCLE_SIZE = 220;

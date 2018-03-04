@@ -17,7 +17,7 @@ import { resetLives } from '../actions/livesActions';
 import { addCircle, resetCircles } from '../actions/circlesActions';
 import InfoBar from '../components/InfoBar.js';
 import ShrinkingCircle from '../components/ShrinkingCircle.js';
-import { CIRCLE_SIZE } from '../utils/config.js';
+import { MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE } from '../utils/config.js';
 import { NavigationActions } from 'react-navigation'
 import { MenuScreen } from '../containers/MenuScreen.js';
 
@@ -36,9 +36,11 @@ class GameScreen extends React.Component {
     this.props.startPlaying();
   }
 
+  // When the component mounts, start creating circles, as the game has started
   componentDidMount() {
     var callback = () => {
-      this.props.addCircle({ location: getRandomLocation(), id: this.state.uid }); // Add a circle to the list of circles
+      circleSize = getRandomCircleSize();
+      this.props.addCircle({ location: getRandomLocation(circleSize), id: this.state.uid, size: circleSize }); // Add a circle to the list of circles
       this.setState({ uid: this.state.uid + 1, difficulty: this.state.difficulty });
       // Increase the rate at which circles are created unless difficulty is getting too insane
       if (this.state.difficulty >= 10) {
@@ -94,7 +96,7 @@ class GameScreen extends React.Component {
     const { navigate } = this.props.navigation;
     // Turn the list of circle locations and IDs into shrinking circle components every re-render
     var circles = this.props.circles.map(
-      (circle) => <ShrinkingCircle key={circle.id} location={circle.location}/>
+      (circle) => <ShrinkingCircle key={circle.id} location={circle.location} size={circle.size}/>
     );
     if (this.props.playing) {
       return (
@@ -133,11 +135,15 @@ function getRandomInt(min, max) {
 }
 
 // Gets a random x,y location on the screen, takes into account the circle size and screen dimensions
-function getRandomLocation() {
+function getRandomLocation(circleSize) {
   location = { x: 0, y: 0 };
-  location.x = getRandomInt(0, Dimensions.get('window').width - CIRCLE_SIZE);
-  location.y = getRandomInt(20, Dimensions.get('window').height - CIRCLE_SIZE);
+  location.x = getRandomInt(0, Dimensions.get('window').width - circleSize);
+  location.y = getRandomInt(20, Dimensions.get('window').height - circleSize);
   return location;
+}
+
+function getRandomCircleSize() {
+  return getRandomInt(MIN_CIRCLE_SIZE, MAX_CIRCLE_SIZE);
 }
 
 const styles = StyleSheet.create({

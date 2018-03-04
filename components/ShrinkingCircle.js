@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
-import { CIRCLE_SIZE } from '../utils/config.js';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
@@ -11,7 +10,7 @@ import { removeCircle } from '../actions/circlesActions';
 class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { size: CIRCLE_SIZE }
+    this.state = { size: props.size }
   }
 
   componentDidMount() {
@@ -41,8 +40,8 @@ class ShrinkingCircle extends React.Component {
       <View style={{
         justifyContent: 'center',
         alignItems: 'center',
-        height: CIRCLE_SIZE,
-        width: CIRCLE_SIZE,
+        height: this.props.size,
+        width: this.props.size,
         top: this.props.location.y,
         left: this.props.location.x,
         position: 'absolute',
@@ -52,11 +51,13 @@ class ShrinkingCircle extends React.Component {
           this.props.removeCircle(this.props.location);
         }} >
         <View style={{
-          backgroundColor: 'midnightblue',
+          backgroundColor: 'red',
           position: 'absolute',
           height: this.state.size,
           width: this.state.size,
-          borderRadius: this.state.size/2
+          borderRadius: this.state.size/2,
+          borderColor: 'black',
+          borderWidth: 1
         }} />
         </TouchableWithoutFeedback>
       </View>
