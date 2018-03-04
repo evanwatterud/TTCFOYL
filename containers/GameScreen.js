@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Platform,
   Dimensions,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  AsyncStorage
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -23,7 +24,6 @@ import { MenuScreen } from '../containers/MenuScreen.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     this.state = { uid: 0 };
   }
 
@@ -38,7 +38,7 @@ class GameScreen extends React.Component {
 
   componentDidMount() {
     this.intervalID = setInterval(() => {
-      this.props.addCircle({ location: getRandomLocation(), id: this.state.uid });
+      this.props.addCircle({ location: getRandomLocation(), id: this.state.uid }); // Add a circle to the list of circles
       this.setState({ uid: this.state.uid + 1 });
     }, 2000);
   }
@@ -49,15 +49,36 @@ class GameScreen extends React.Component {
     }
   }
 
-  endGame() {
+  async endGame() {
     clearInterval(this.intervalID);
+
+    try {
+      let highscore = await AsyncStorage.getItem('highscore');
+      if (Number(highscore) < this.props.score) {
+        this.setHighscore(this.props.score);
+      }
+    } catch (error) {
+      console.log(error); // May add error reporting later
+    }
     this.props.resetScore();
     this.props.resetLives();
   }
 
+  // Asynchronous function for setting the highscore to persistent storage
+  async setHighscore(score) {
+    try {
+      await AsyncStorage.setItem('highscore', score.toString())
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   render() {
     const { navigate } = this.props.navigation;
-    var circles = this.props.circles.map((circle) => <ShrinkingCircle key={circle.id} location={circle.location}/> );
+    // Turn the list of circle locations and IDs into shrinking circle components every re-render
+    var circles = this.props.circles.map(
+      (circle) => <ShrinkingCircle key={circle.id} location={circle.location}/>
+    );
     if (this.props.playing) {
       return (
         <View>

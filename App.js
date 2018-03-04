@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 
 import MenuScreen from './containers/MenuScreen';
 import GameScreen from './containers/GameScreen';
-import HighScoreScreen from './containers/HighScoreScreen';
 
 import store from './store/index';
 import incrementScore from './actions/scoreActions';
@@ -14,8 +13,7 @@ const Nav = StackNavigator(
   {
     // Screens of the app
     Menu: { screen: MenuScreen },
-    Game: { screen: GameScreen },
-    HighScore: { screen: HighScoreScreen },
+    Game: { screen: GameScreen }
   },
   {
     initialRouteName: 'Menu', // Have the app start on the menu screen
