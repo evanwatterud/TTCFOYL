@@ -24,7 +24,7 @@ import { MenuScreen } from '../containers/MenuScreen.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { uid: 0, difficulty: 500 };
+    this.state = { uid: 0, difficulty: 500};
   }
 
   static navigationOptions = {
@@ -38,9 +38,9 @@ class GameScreen extends React.Component {
 
   // When the component mounts, start creating circles, as the game has started
   componentDidMount() {
-    var callback = () => {
+    var createCircleCallback = () => {
       circleSize = getRandomCircleSize();
-      this.props.addCircle({ location: getRandomLocation(circleSize), id: this.state.uid, size: circleSize }); // Add a circle to the list of circles
+      this.props.addCircle({ location: getRandomLocation(circleSize), id: this.state.uid, initialSize: circleSize }); // Add a circle to the list of circles
       this.setState({ uid: this.state.uid + 1, difficulty: this.state.difficulty });
       // Increase the rate at which circles are created unless difficulty is getting too insane
       if (this.state.difficulty >= 10) {
@@ -48,11 +48,11 @@ class GameScreen extends React.Component {
       }
       // While the player is still playing keep creating circles
       if (this.props.playing) {
-        setTimeout(callback, this.state.difficulty);
+        setTimeout(createCircleCallback, this.state.difficulty);
       }
     }
 
-    setTimeout(callback, this.state.difficulty);
+    setTimeout(createCircleCallback, this.state.difficulty);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -69,8 +69,6 @@ class GameScreen extends React.Component {
   }
 
   async endGame() {
-    clearInterval(this.intervalID);
-
     try {
       let highscore = await AsyncStorage.getItem('highscore');
       if (Number(highscore) < this.props.score) {
@@ -96,7 +94,7 @@ class GameScreen extends React.Component {
     const { navigate } = this.props.navigation;
     // Turn the list of circle locations and IDs into shrinking circle components every re-render
     var circles = this.props.circles.map(
-      (circle) => <ShrinkingCircle key={circle.id} location={circle.location} size={circle.size}/>
+      (circle) => <ShrinkingCircle key={circle.id} location={circle.location} initialSize={circle.initialSize} tick={this.state.tick} />
     );
     if (this.props.playing) {
       return (

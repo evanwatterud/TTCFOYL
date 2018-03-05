@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Button, AsyncStorage } from 'react-native';
+import { Text, View, TouchableOpacity, AsyncStorage, StyleSheet } from 'react-native';
 
 export default class MenuScreen extends React.Component {
   constructor(props) {
@@ -8,7 +8,8 @@ export default class MenuScreen extends React.Component {
   }
 
   static navigationOptions = {
-    title: 'TTCFOYL'
+    title: 'TTCFOYL',
+    header: null
   };
 
   componentWillMount() {
@@ -30,13 +31,33 @@ export default class MenuScreen extends React.Component {
   render() {
     const { navigate } = this.props.navigation;
     return (
-      <View>
-        <Button
-          onPress={() => navigate('Game')}
-          title="Play"
-        />
+      <View style={styles.menuContainer} >
+        <View style={styles.title} >
+          <Text>TTCFOYL</Text>
+        </View>
+        <TouchableOpacity onPress={() => navigate('Game')} >
+          <View style={styles.playButton} >
+            <Text>Play</Text>
+          </View>
+        </TouchableOpacity>
         <Text>Highscore: {this.state.highscore}</Text>
       </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  playButton: {
+
+  },
+
+  title: {
+
+  },
+
+  menuContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { incrementScore, resetScore } from '../actions/scoreActions';
@@ -10,21 +10,37 @@ import { removeCircle } from '../actions/circlesActions';
 class ShrinkingCircle extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { size: props.size }
+    this.size = new Animated.Value(props.initialSize);
+    this.borderRadius = new Animated.Value(props.initialSize/2);
   }
 
   componentDidMount() {
-    this._mounted = true;
-    // The circle shrinks every tick of this time interval
-    var interval = setInterval(() => {
-      if (this.state.size <= 2) { // Check if the circle is small enough to be deleted
+    this.shrink()
+  }
+
+  shrink() {
+    this.size.setValue(this.props.initialSize);
+    Animated.timing(
+      this.size,
+      {
+        toValue: 0,
+        duration: 5000,
+        easing: Easing.linear
+      }
+    ).start((animation) => {
+      if (animation.finished) {
         this.props.decrementLives();
         this.props.removeCircle(this.props.location);
-        clearInterval(interval);
-      } else if (this._mounted == true){ // If the circle is sufficient size, shrink by 0.5
-        this.setState({ size: this.state.size - 0.5 });
       }
-    }, 10);
+    });
+    Animated.timing(
+      this.borderRadius,
+      {
+        toValue: 0,
+        duration: 5000,
+        easing: Easing.linear
+      }
+    ).start();
   }
 
   componentWillUnmount() {
@@ -32,7 +48,6 @@ class ShrinkingCircle extends React.Component {
     if (this.props.lives == 0) {
       this.props.stopPlaying();
     }
-    this._mounted = false;
   }
 
   render() {
@@ -40,8 +55,8 @@ class ShrinkingCircle extends React.Component {
       <View style={{
         justifyContent: 'center',
         alignItems: 'center',
-        height: this.props.size,
-        width: this.props.size,
+        height: this.props.initialSize,
+        width: this.props.initialSize,
         top: this.props.location.y,
         left: this.props.location.x,
         position: 'absolute',
@@ -50,12 +65,12 @@ class ShrinkingCircle extends React.Component {
           this.props.incrementScore();
           this.props.removeCircle(this.props.location);
         }} >
-        <View style={{
+        <Animated.View style={{
           backgroundColor: 'red',
           position: 'absolute',
-          height: this.state.size,
-          width: this.state.size,
-          borderRadius: this.state.size/2,
+          height: this.size,
+          width: this.size,
+          borderRadius: this.borderRadius,
           borderColor: 'black',
           borderWidth: 1
         }} />
@@ -67,9 +82,8 @@ class ShrinkingCircle extends React.Component {
 
 // Map redux state to the ShrinkingCircle props
 const mapStateToProps = (state) => ({
-  score: state.score,
-  lives: state.lives,
-  circles: state.circles
+  circles: state.circles,
+  lives: state.lives
 });
 
 // Map redux dispatch functions to the ShrinkingCircle props
