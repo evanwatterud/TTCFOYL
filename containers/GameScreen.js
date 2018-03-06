@@ -7,7 +7,8 @@ import {
   Platform,
   Dimensions,
   TouchableWithoutFeedback,
-  AsyncStorage
+  AsyncStorage,
+  TouchableOpacity
 } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -107,8 +108,8 @@ class GameScreen extends React.Component {
       )
     } else {
       return (
-        <View>
-          <Button
+        <View style={styles.lossMenuContainer}>
+          <TouchableOpacity
             onPress={ () =>
               // This navigates to the menu screen while reseting the screen stack
               { this.props.navigation.dispatch(NavigationActions.reset({
@@ -117,8 +118,11 @@ class GameScreen extends React.Component {
                 actions: [NavigationActions.navigate({ routeName: 'Menu' })]
               })); }
             }
-            title="Main Menu"
-          />
+          >
+            <View>
+              <Text>Main Menu</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       )
     }
@@ -147,6 +151,12 @@ function getRandomCircleSize() {
 const styles = StyleSheet.create({
   barContainer: {
     paddingTop: 20, // Padding to account for OS status bar
+  },
+
+  lossMenuContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
