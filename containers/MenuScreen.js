@@ -32,8 +32,8 @@ export default class MenuScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.menuContainer} >
-        <View style={styles.title} >
-          <Text>TTCFOYL</Text>
+        <View style={styles.titleContainer} >
+          <Text style={styles.title} >TTCFOYL</Text>
         </View>
         <TouchableOpacity onPress={() => navigate('Game')} >
           <View style={styles.playButton} >
@@ -51,8 +51,13 @@ const styles = StyleSheet.create({
 
   },
 
-  title: {
+  titleContainer: {
 
+  },
+
+  title: {
+    fontFamily: 'dancing-script-bold',
+    fontSize: 42
   },
 
   menuContainer: {

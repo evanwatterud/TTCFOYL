@@ -119,7 +119,7 @@ class GameScreen extends React.Component {
               })); }
             }
           >
-            <View>
+            <View style={styles.mainMenuButton}>
               <Text>Main Menu</Text>
             </View>
           </TouchableOpacity>
@@ -157,6 +157,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center'
+  },
+
+  mainMenuButton: {
+    
   }
 });
 

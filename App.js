@@ -2,6 +2,7 @@ import React from 'react';
 import { Easing, Animated, StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import { Provider } from 'react-redux';
+import { Font } from 'expo';
 
 import MenuScreen from './containers/MenuScreen';
 import GameScreen from './containers/GameScreen';
@@ -29,11 +30,28 @@ const Nav = StackNavigator(
 );
 
 export default class App extends React.Component {
+  state = {
+    fontLoaded: false
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      'dancing-script-bold': require('./assets/fonts/DancingScriptBold.ttf'),
+      'dancing-script-regular': require('./assets/fonts/DancingScriptRegular.ttf')
+    });
+
+    this.setState({ fontLoaded: true });
+  }
+
   render() {
-    return (
-      <Provider store={store}>
-        <Nav />
-      </Provider>
-    );
+    if (this.state.fontLoaded) {
+      return (
+        <Provider store={store}>
+          <Nav />
+        </Provider>
+      );
+    } else {
+      return null
+    }
   }
 }
