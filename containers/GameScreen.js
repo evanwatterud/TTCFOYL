@@ -10,8 +10,10 @@ import {
   AsyncStorage,
   TouchableOpacity
 } from 'react-native';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import { startPlaying, stopPlaying } from '../actions/playingActions';
 import { resetLives } from '../actions/livesActions';
@@ -25,7 +27,7 @@ import { MenuScreen } from '../containers/MenuScreen.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { uid: 0, difficulty: 500};
+    this.state = { uid: 0, difficulty: 350};
   }
 
   static navigationOptions = {
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
   },
 
   mainMenuButton: {
-    
+
   }
 });
 

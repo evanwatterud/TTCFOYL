@@ -57,6 +57,10 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: 'dancing-script-bold',
+    color: 'red',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    textShadowOffset: {width: 1, height: 1},
     fontSize: 42
   },
 

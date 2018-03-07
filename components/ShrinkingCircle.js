@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
+
+import { Audio } from 'expo'
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import { stopPlaying } from '../actions/playingActions';
 import { decrementLives } from '../actions/livesActions';
@@ -14,6 +18,7 @@ class ShrinkingCircle extends React.Component {
     this.borderRadius = new Animated.Value(props.initialSize/2);
   }
 
+  // Start shrinking the circle when it mounts to the game screen
   componentDidMount() {
     this.shrink()
   }
@@ -24,7 +29,7 @@ class ShrinkingCircle extends React.Component {
       this.size,
       {
         toValue: 0,
-        duration: 5000,
+        duration: 3000,
         easing: Easing.linear
       }
     ).start((animation) => {
@@ -37,7 +42,7 @@ class ShrinkingCircle extends React.Component {
       this.borderRadius,
       {
         toValue: 0,
-        duration: 5000,
+        duration: 3000,
         easing: Easing.linear
       }
     ).start();
@@ -47,6 +52,17 @@ class ShrinkingCircle extends React.Component {
     // If the circle is being deleted and lives are at 0, the player lost, so stop playing
     if (this.props.lives == 0) {
       this.props.stopPlaying();
+    }
+  }
+
+  // Asynchronous function to play Owen Wilson's famous wow
+  async playWowSound() {
+    const soundObject = new Expo.Audio.Sound();
+    try {
+      await soundObject.loadAsync(require('../assets/sounds/wow.mp3'));
+      await soundObject.playAsync();
+    } catch (error) {
+      console.log(error); // Catch any errors when trying to play the sound
     }
   }
 
@@ -62,6 +78,7 @@ class ShrinkingCircle extends React.Component {
         position: 'absolute',
       }}>
         <TouchableWithoutFeedback onPress={() => {
+          this.playWowSound();
           this.props.incrementScore();
           this.props.removeCircle(this.props.location);
         }} >
