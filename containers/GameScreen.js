@@ -14,6 +14,8 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { Audio } from 'expo';
+
 import { incrementScore, resetScore } from '../actions/scoreActions';
 import { startPlaying, stopPlaying } from '../actions/playingActions';
 import { resetLives } from '../actions/livesActions';
@@ -28,6 +30,7 @@ class GameScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { uid: 0, difficulty: 350};
+    this.soundObject = {};
   }
 
   static navigationOptions = {
@@ -37,6 +40,9 @@ class GameScreen extends React.Component {
 
   componentWillMount() {
     this.props.startPlaying();
+    this.loadWowSound();
+    this.props.resetScore();
+    this.props.resetLives();
   }
 
   // When the component mounts, start creating circles, as the game has started
@@ -56,6 +62,12 @@ class GameScreen extends React.Component {
     }
 
     setTimeout(createCircleCallback, this.state.difficulty);
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextProps.circles.length < this.props.circles.length) {
+      this.playWowSound();
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -80,8 +92,6 @@ class GameScreen extends React.Component {
     } catch (error) {
       console.log(error); // May add error reporting later
     }
-    this.props.resetScore();
-    this.props.resetLives();
   }
 
   // Asynchronous function for setting the highscore to persistent storage
@@ -93,11 +103,42 @@ class GameScreen extends React.Component {
     }
   }
 
+  // Asynchronous function to play Owen Wilson's famous wow
+  async playWowSound() {
+    try {
+      status = await this.soundObject.getStatusAsync();
+      if (status.isPlaying) {
+        await this.soundObject.stopAsync();
+      }
+      await this.soundObject.playAsync();
+    } catch (error) {
+      console.log(error); // Catch any errors when trying to play the sound
+    }
+  }
+
+  async loadWowSound() {
+    this.soundObject = new Expo.Audio.Sound();
+    try {
+      await this.soundObject.loadAsync(require('../assets/sounds/wow.mp3'));
+    } catch (error) {
+      console.log(error); // Catch any errors when trying to play the sound
+    }
+  }
+
+  async unloadWowSound() {
+    this.soundObject = new Expo.Audio.Sound();
+    try {
+      await this.soundObject.unloadAsync();
+    } catch (error) {
+      console.log(error); // Catch any errors when trying to play the sound
+    }
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     // Turn the list of circle locations and IDs into shrinking circle components every re-render
     var circles = this.props.circles.map(
-      (circle) => <ShrinkingCircle key={circle.id} location={circle.location} initialSize={circle.initialSize} tick={this.state.tick} />
+      (circle) => <ShrinkingCircle key={circle.id} location={circle.location} initialSize={circle.initialSize} sound={this.soundObject} />
     );
     if (this.props.playing) {
       return (
@@ -111,6 +152,9 @@ class GameScreen extends React.Component {
     } else {
       return (
         <View style={styles.lossMenuContainer}>
+          <View>
+            <Text>Game Over</Text>
+          </View>
           <TouchableOpacity
             onPress={ () =>
               // This navigates to the menu screen while reseting the screen stack
@@ -125,6 +169,9 @@ class GameScreen extends React.Component {
               <Text>Main Menu</Text>
             </View>
           </TouchableOpacity>
+          <View>
+            <Text>Score: {this.props.score}</Text>
+          </View>
         </View>
       )
     }

@@ -1,8 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, TouchableWithoutFeedback, Animated, Easing } from 'react-native';
 
-import { Audio } from 'expo'
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -55,17 +53,6 @@ class ShrinkingCircle extends React.Component {
     }
   }
 
-  // Asynchronous function to play Owen Wilson's famous wow
-  async playWowSound() {
-    const soundObject = new Expo.Audio.Sound();
-    try {
-      await soundObject.loadAsync(require('../assets/sounds/wow.mp3'));
-      await soundObject.playAsync();
-    } catch (error) {
-      console.log(error); // Catch any errors when trying to play the sound
-    }
-  }
-
   render() {
     return (
       <View style={{
@@ -78,7 +65,6 @@ class ShrinkingCircle extends React.Component {
         position: 'absolute',
       }}>
         <TouchableWithoutFeedback onPress={() => {
-          this.playWowSound();
           this.props.incrementScore();
           this.props.removeCircle(this.props.location);
         }} >

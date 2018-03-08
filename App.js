@@ -36,8 +36,7 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     await Font.loadAsync({
-      'dancing-script-bold': require('./assets/fonts/DancingScriptBold.ttf'),
-      'dancing-script-regular': require('./assets/fonts/DancingScriptRegular.ttf')
+      'chicle-regular': require('./assets/fonts/Chicle-Regular.ttf')
     });
 
     this.setState({ fontLoaded: true });
