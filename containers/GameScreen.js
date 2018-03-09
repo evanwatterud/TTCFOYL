@@ -8,7 +8,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   AsyncStorage,
-  TouchableOpacity
+  TouchableHighlight
 } from 'react-native';
 
 import { connect } from 'react-redux';
@@ -29,7 +29,7 @@ import { MenuScreen } from '../containers/MenuScreen.js';
 class GameScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { uid: 0, difficulty: 350};
+    this.state = { uid: 0, difficulty: 350, pressStatus: false };
     this.soundObject = {};
   }
 
@@ -50,10 +50,10 @@ class GameScreen extends React.Component {
     var createCircleCallback = () => {
       circleSize = getRandomCircleSize();
       this.props.addCircle({ location: getRandomLocation(circleSize), id: this.state.uid, initialSize: circleSize }); // Add a circle to the list of circles
-      this.setState({ uid: this.state.uid + 1, difficulty: this.state.difficulty });
+      this.setState({ uid: this.state.uid + 1, difficulty: this.state.difficulty, pressStatus: this.state.pressStatus });
       // Increase the rate at which circles are created unless difficulty is getting too insane
       if (this.state.difficulty >= 10) {
-        this.setState({ uid: this.state.uid, difficulty: this.state.difficulty - 0.5 });
+        this.setState({ uid: this.state.uid, difficulty: this.state.difficulty - 0.5, pressStatus: this.state.pressStatus });
       }
       // While the player is still playing keep creating circles
       if (this.props.playing) {
@@ -74,6 +74,7 @@ class GameScreen extends React.Component {
     // Check if the player has stopped playing, if so, handle ending the game
     if (!nextProps.playing) {
       this.endGame();
+      this.soundObject.stopAsync(); // This is to fix an expo sound bug that plays sounds when returning to app from multitasking
     }
   }
 
@@ -108,9 +109,10 @@ class GameScreen extends React.Component {
     try {
       status = await this.soundObject.getStatusAsync();
       if (status.isPlaying) {
-        await this.soundObject.stopAsync();
+        await this.soundObject.replayAsync();
+      } else {
+        await this.soundObject.playAsync();
       }
-      await this.soundObject.playAsync();
     } catch (error) {
       console.log(error); // Catch any errors when trying to play the sound
     }
@@ -134,6 +136,14 @@ class GameScreen extends React.Component {
     }
   }
 
+  _onHideUnderlay() {
+    this.setState({ uid: this.state.uid, difficulty: this.state.difficulty, pressStatus: false });
+  }
+
+  _onShowUnderlay() {
+    this.setState({ uid: this.state.uid, difficulty: this.state.difficulty, pressStatus: true });
+  }
+
   render() {
     const { navigate } = this.props.navigation;
     // Turn the list of circle locations and IDs into shrinking circle components every re-render
@@ -153,9 +163,12 @@ class GameScreen extends React.Component {
       return (
         <View style={styles.lossMenuContainer}>
           <View>
-            <Text>Game Over</Text>
+            <Text style={styles.gameOverText} >Game Over</Text>
           </View>
-          <TouchableOpacity
+          <TouchableHighlight
+            underlayColor='white'
+            onHideUnderlay={() => this._onHideUnderlay()}
+            onShowUnderlay={() => this._onShowUnderlay()}
             onPress={ () =>
               // This navigates to the menu screen while reseting the screen stack
               { this.props.navigation.dispatch(NavigationActions.reset({
@@ -165,12 +178,12 @@ class GameScreen extends React.Component {
               })); }
             }
           >
-            <View style={styles.mainMenuButton}>
-              <Text>Main Menu</Text>
+            <View style={this.state.pressStatus ? styles.mainMenuButtonDown : styles.mainMenuButtonUp} >
+              <Text style={this.state.pressStatus ? styles.mainMenuTextDown : styles.mainMenuTextUp} >Main Menu</Text>
             </View>
-          </TouchableOpacity>
-          <View>
-            <Text>Score: {this.props.score}</Text>
+          </TouchableHighlight>
+          <View style={styles.scoreContainer}>
+            <Text style={styles.scoreText}>Score: {this.props.score}</Text>
           </View>
         </View>
       )
@@ -202,15 +215,80 @@ const styles = StyleSheet.create({
     paddingTop: 20, // Padding to account for OS status bar
   },
 
+  gameOverText: {
+    fontFamily: 'chicle-regular',
+    color: 'red',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    textShadowOffset: {width: 2, height: 3},
+    fontSize: 60,
+    transform: [
+      {rotateX: '45deg'}
+    ]
+  },
+
+  scoreContainer: {
+    paddingTop: 15
+  },
+
+  scoreText: {
+    fontFamily: 'chicle-regular',
+    color: 'red',
+    textShadowColor: 'black',
+    textShadowRadius: 1,
+    textShadowOffset: {width: 1, height: 1},
+    fontSize: 25,
+    transform: [
+      {rotateX: '45deg'}
+    ]
+  },
+
   lossMenuContainer: {
     flex: 1,
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center'
   },
 
-  mainMenuButton: {
+  mainMenuButtonDown: {
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderRadius: 22,
+    borderColor: 'black',
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
 
-  }
+  mainMenuButtonUp: {
+    backgroundColor: 'red',
+    borderWidth: 2,
+    borderRadius: 22,
+    borderColor: 'black',
+    paddingRight: 20,
+    paddingLeft: 20,
+    paddingTop: 5,
+    paddingBottom: 5
+  },
+
+  mainMenuTextUp: {
+    fontFamily: 'chicle-regular',
+    color: 'white',
+    fontSize: 20,
+    transform: [
+      {rotateX: '45deg'}
+    ]
+  },
+
+  mainMenuTextDown: {
+    fontFamily: 'chicle-regular',
+    color: 'red',
+    fontSize: 20,
+    transform: [
+      {rotateX: '45deg'}
+    ]
+  },
 });
 
 // Map redux state to the GameScreen props
